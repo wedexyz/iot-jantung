@@ -1,216 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Aplikasi Jantung</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial;
-  margin: 0;
-}
-
-/* Header */
-header {
-  padding: 60px;
-  text-align: center;
-  background: #1abc9c;
-  color: white;
-}
-
-/* Top navigation bar */
-.navbar {
-  display: flex;
-  background-color: #333;
-}
-
-/* Navigation bar links */
-.navbar a {
-  color: white;
-  padding: 14px 20px;
-  text-decoration: none;
-  text-align: center;
-}
-
-/* Change color on hover */
-.navbar a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-/* Column container */
-.container {  
-  display: flex;
-  flex-wrap: wrap;
-}
-
-/* Sidebar/left column */
-.side {
-  flex: 30%;
-  background-color: #f1f1f1;
-  padding: 20px;
-}
-
-/* Main column */
-.main {
-  flex: 70%;
-  background-color: white;
-  padding: 20px;
-}
-
-/* Fake image, just for this example */
-.fakeimg {
-  background-color: #aaa;
-  width: 100%;
-  padding: 20px;
-}
-
-/* Footer */
-footer {
-  padding: 20px;
-  text-align: center;
-  background: #ddd;
-}
-
-/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 700px) {
-  .container, .navbar {   
-    flex-direction: column;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Web dengan Animasi Kartu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white; /* Layout putih */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px; /* Pusatkan logo dan beri jarak bawah */
+            max-width: 150px; /* Sesuaikan ukuran logo */
+        }
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        .card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card img {
+            max-width: 100%;
+            height: 80%;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+    </style>
 </head>
 <body>
-
-<!-- Note -->
-<div style="background:rgb(2, 2, 2);padding:5px;text-align:center; margin: 10px;">
-  <h1 style="color: #f1f1f1;">Aplikasi Jantung</h1>
-</div>
-
-
-
-
-<!-- Content Container -->
-<div class="container">
-  <div class="side">
-    
-  </div>
-  <div class="main">
-    <h2>Data jantung <span id="data"></span> (bpm)  </h2>
-    <h5>Beat Per Minute</h5>
-    <div  id="grafik" style="height:300px;"></div>
-   </div>
-</div>
-
-
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
-
-<script src= "firebase.js"></script>
-<script>
-    var config = {
-    apiKey: "AIzaSyAhopUXfUnSNw8O2R3NT9w0Z9SeO7ox58A",
-    authDomain: "kknbanyuwangi2023.firebaseapp.com",
-    databaseURL: "https://kknbanyuwangi2023-default-rtdb.firebaseio.com",
-    projectId: "kknbanyuwangi2023",
-    storageBucket: "kknbanyuwangi2023.firebasestorage.app",
-    messagingSenderId: "643889264073",
-    appId: "1:643889264073:web:2b0d5ba40d81e3138fe418",
-    measurementId: "G-GXGM5WJZL1"
-
-  };
-firebase.initializeApp(config);
-var db = firebase.database();
-var tes = db.ref("/pulse/bpm");
-console.log(tes)
-tes.on("value", function(snapshot) { document.getElementById('data').innerHTML=snapshot.val();});
-Highcharts.stockChart('grafik', {
-    chart: {
-        //backgroundColor: 'transparent',
-       //type: 'line',
-         //type: 'areaspline',
+    <div>
+        <!-- Logo di atas judul -->
+        <img src="https://kampoengbatara.id/wp-content/uploads/2024/08/logo-2-e1725375858192.jpeg" alt="Logo" class="logo"> <!-- Ganti 'logo.png' dengan path/logo Anda -->
         
-        type: 'spline',
-        events: {
-            load: function () {
-
-                // set up the updating of the chart each second
-                const series = this.series[0];
-                setInterval(function () {
-                        tes.on("value", function(snapshot) {
-                        const x = (new Date()).getTime(), // current time
-                        y= snapshot.val()
-                        series.addPoint([x, y], true, true);
-                });
-                }, 1000);
-            }
-        }
-    },
-
-    accessibility: {
-        enabled: true
-    },
-
-    time: {
-        useUTC: false
-    },
-
-    rangeSelector: {
-        buttons: [{
-            count: 1,
-            type: 'minute',
-            text: '1M'
-        }, {
-            count: 5,
-            type: 'minute',
-            text: '5M'
-        }, {
-            type: 'all',
-            text: 'All'
-        }],
-        inputEnabled: false,
-        selected: 0
-    },
-
-    title: {
-        text: 'Sensor Jantung'
-    },
-
-    exporting: {
-        enabled: true
-      // enabled: false
-
-    },
-
-    series: [{
-        name: 'BPM',
-        data: (function () {
-            // generate an array of random data
-            const data = [],
-                time = (new Date()).getTime();
-
-            for (let i = -999; i <= 0; i += 1) {
-                data.push([
-                    time + i * 1000,0
-                   // Math.round(Math.random() * 100)
+        <h1>Layanan Baru</h1>
+        <div class="menu-container">
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1KkeiNG5U5CAFDNwRMQgHKw1Fvl9THJwP7w&s" alt="Gambar Beranda"> <!-- Placeholder gambar -->
+                <a href="sekolah.html"> <h3>Sekolah Rimba</h3></a>
+               
                 
-                ]);
-            }
-            return data;
-        }())
-    }]
-});
-</script>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWYb_Hz11ur-wR3KRZ18LP94nIdcfuS1zqeQ&s" alt="Gambar Tentang Kami"> <!-- Placeholder gambar -->
+                <a href="map.html"><h3>Sistem Informasi Geografis Bambu</h3></a>
+                
+                
+            </div>
+          
+        </div>
+    </div>
 
+    <script>
+        // Animasi kartu saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('show');
+                }, index * 200); // Delay bertahap untuk animasi
+            });
+        });
+    </script>
 </body>
 </html>
-
-

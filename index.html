@@ -53,13 +53,14 @@ header {
   flex: 30%;
   background-color: #f1f1f1;
   padding: 20px;
+  margin :10px;
 }
 
 /* Main column */
 .main {
   flex: 70%;
   background-color: white;
-  padding: 20px;
+  padding: 10px;
 }
 
 /* Fake image, just for this example */
@@ -99,6 +100,7 @@ footer {
   <div class="side">
     <h2>Data jantung <span id="data"></span> (bpm)  </h2>
     <h5>Beat Per Minute</h5>
+
   </div>
   <div class="main">
     
@@ -109,10 +111,17 @@ footer {
 
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<!--
+
+
+-->
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+
+
+
+
 
 <script src= "firebase.js"></script>
 <script>
@@ -130,15 +139,16 @@ footer {
 firebase.initializeApp(config);
 var db = firebase.database();
 var tes = db.ref("/pulse/bpm");
-console.log(tes)
-tes.on("value", function(snapshot) { document.getElementById('data').innerHTML=snapshot.val();});
+
+//s.on("value", function(snapshot) { document.getElementById('data').innerHTML=snapshot.val();});
 Highcharts.stockChart('grafik', {
     chart: {
         //backgroundColor: 'transparent',
-       //type: 'line',
-         //type: 'areaspline',
-        
-        type: 'spline',
+      //ype: 'line',
+    
+        //type: 'spline',
+
+                  
         events: {
             load: function () {
 
@@ -147,14 +157,16 @@ Highcharts.stockChart('grafik', {
                 setInterval(function () {
                         tes.on("value", function(snapshot) {
                         const x = (new Date()).getTime(), // current time
+                        
                         y= snapshot.val()
                         series.addPoint([x, y], true, true);
+                        document.getElementById('data').innerHTML=y;
                 });
-                }, 1000);
+                },1200);
             }
         }
     },
-
+    
     accessibility: {
         enabled: true
     },
@@ -191,6 +203,11 @@ Highcharts.stockChart('grafik', {
     },
 
     series: [{
+      type: 'line',
+      color: '#C03030',
+        negativeColor: '#297AA3',
+        threshold: 100,
+   
         name: 'BPM',
         data: (function () {
             // generate an array of random data
@@ -199,8 +216,8 @@ Highcharts.stockChart('grafik', {
 
             for (let i = -999; i <= 0; i += 1) {
                 data.push([
-                    time + i * 1000,0
-                   // Math.round(Math.random() * 100)
+                    time + i * 1000,
+                   110
                 
                 ]);
             }
